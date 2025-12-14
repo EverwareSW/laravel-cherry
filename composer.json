@@ -1,0 +1,66 @@
+{
+    "name": "everware/laravel-cherry",
+    "description": "Contains everything we believe Laravel is missing. From helpers to fixes to ready to use classes and traits. It is the cherry on top!",
+    "keywords": ["laravel", "tools", "helpers", "extensions"],
+    "type": "library",
+    "readme": "README.md",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/EverwareSW/laravel-cherry/issues",
+        "source": "https://github.com/EverwareSW/laravel-cherry"
+    },
+    "authors": [
+        {
+            "name": "Ken van der Eerden",
+            "email": "support+laravel-cherry@everware.nl"
+        }
+    ],
+    "require": {
+        "laravel/framework": "^12.0",
+        "illuminate/support": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.6",
+        "pestphp/pest": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Everware\\LaravelCherry\\": "src/",
+            "Everware\\LaravelCherry\\Tests\\Concerns\\": "tests/Concerns"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Everware\\LaravelCherry\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Everware\\LaravelCherry\\Providers\\CherryServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
