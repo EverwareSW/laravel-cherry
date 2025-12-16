@@ -24,6 +24,10 @@
         "pestphp/pest": "^4.1"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php",
+            "tests/PestExpectations.php"
+        ],
         "psr-4": {
             "Everware\\LaravelCherry\\": "src/",
             "Everware\\LaravelCherry\\Tests\\Concerns\\": "tests/Concerns"
@@ -41,7 +45,18 @@
         "laravel": {
             "providers": [
                 "Everware\\LaravelCherry\\Providers\\CherryServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Mail": "Everware\\LaravelCherry\\Mail\\Facades\\Mail",
+
+                "HArr": "Everware\\LaravelCherry\\Helpers\\ArrayHelper",
+                "HDb": "Everware\\LaravelCherry\\Helpers\\DatabaseHelper",
+                "HExc": "Everware\\LaravelCherry\\Helpers\\ExceptionHelper",
+                "HFile": "Everware\\LaravelCherry\\Helpers\\FileHelper",
+                "HNum": "Everware\\LaravelCherry\\Helpers\\NumberHelper",
+                "HStr": "Everware\\LaravelCherry\\Helpers\\StringHelper",
+                "HUrl": "Everware\\LaravelCherry\\Helpers\\UrlHelper"
+            }
         }
     },
     "scripts": {

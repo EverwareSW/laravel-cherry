@@ -2,6 +2,7 @@
 
 namespace Everware\LaravelCherry\Providers;
 
+use Everware\LaravelCherry\Console\Commands\DispatchJobCommand;
 use Illuminate\Support\ServiceProvider;
 
 class CherryServiceProvider extends ServiceProvider
@@ -15,6 +16,10 @@ class CherryServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                DispatchJobCommand::class,
+            ]);
+        }
     }
 }
