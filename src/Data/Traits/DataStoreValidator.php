@@ -6,8 +6,7 @@ use Illuminate\Validation\Validator;
 use Spatie\LaravelData\Support\Creation\CreationContext;
 
 /**
- * @TODO Should we name 'laravel-data' in composer.json somehow (without requiring it)?
- *       If we do, we can write tests for this trait.
+ * Only works when https://github.com/spatie/laravel-data/pull/1108 is merged.
  */
 trait DataStoreValidator
 {
