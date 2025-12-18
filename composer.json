@@ -51,9 +51,11 @@
                 "Mail": "Everware\\LaravelCherry\\Mail\\Facades\\Mail",
 
                 "HArr": "Everware\\LaravelCherry\\Helpers\\ArrayHelper",
+                "HCast": "Everware\\LaravelCherry\\Helpers\\CastHelper",
                 "HDb": "Everware\\LaravelCherry\\Helpers\\DatabaseHelper",
                 "HExc": "Everware\\LaravelCherry\\Helpers\\ExceptionHelper",
                 "HFile": "Everware\\LaravelCherry\\Helpers\\FileHelper",
+                "HInertia": "Everware\\LaravelCherry\\Helpers\\InertiaHelper",
                 "HMail": "Everware\\LaravelCherry\\Helpers\\MailHelper",
                 "HNum": "Everware\\LaravelCherry\\Helpers\\NumberHelper",
                 "HStr": "Everware\\LaravelCherry\\Helpers\\StringHelper",

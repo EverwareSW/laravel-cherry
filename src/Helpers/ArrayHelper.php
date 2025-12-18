@@ -266,29 +266,28 @@ class ArrayHelper
     }
 
     /**
-     * Merge arrays and also merge child arrays recursively.
+     * Merge dictionaries and child dictionaries recursively. The first array key takes precedence.
+     * Does not merge lists (arrays with numeric keys).
      *
      * @param array ...$arrays
      * @return array
      */
     public static function mergeRecursively(array...$arrays): array
     {
-        $allKeys = array_unique(array_merge(...array_map('array_keys', $arrays)));
-
         $rtn = array_shift($arrays);
         foreach ($arrays as $array) {
-            foreach ($allKeys as $key) {
-                if (($rtn[$key] ?? null) === null && ($array[$key] ?? null) === null) {
-                    $rtn[$key] = null;
-                } elseif (is_array($rtn[$key] ?? null) || is_array($array[$key] ?? null)) {
-                    $value1 = \Arr::wrap($rtn[$key] ?? []);
-                    $value2 = \Arr::wrap($array[$key] ?? []);
+            foreach ($array as $key => $newValue) {
+                if (!array_key_exists($key, $rtn)) {
+                    $rtn[$key] = $newValue;
+                    continue;
+                }
 
+                $oldValue = $rtn[$key];
+                if (is_array($oldValue) || is_array($newValue)) {
                     // Not using array_unique() because see https://stackoverflow.com/a/18373723/3017716#comment-117672159
-                    $rtn[$key] = static::mergeRecursively($value1, $value2);
-                    $rtn[$key] = array_map('unserialize', array_unique(array_map('serialize', $rtn[$key])));
-                } else {
-                    $rtn[$key] = array_key_exists($key, $rtn) ? $rtn[$key] : $array[$key];
+                    $rtn[$key] = static::mergeRecursively(\Arr::wrap($oldValue), \Arr::wrap($newValue));
+                    //// Clone any objects to avoid reference issues.
+                    // $rtn[$key] = array_map('unserialize', array_unique(array_map('serialize', $rtn[$key])));
                 }
             }
         }

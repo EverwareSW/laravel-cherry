@@ -5,8 +5,8 @@ namespace Everware\LaravelCherry\Http\Controllers\Traits;
 trait ActionPermissionProtection
 {
     /**
-     * Protect all public action methods using permissions named 'prefix.action' (e.g. 'orders.show').
-     * Call this method from Controller constructor, e.g. `$this->protectActionsUsingPermissions(PermissionEnum::ordersIndex)`.
+     * Protect all public action methods of Controllers using permissions named 'prefix.action' (e.g. 'orders.show').
+     * Call this method from Controller constructor, e.g. `$this->protectActionsUsingPermissions(PermissionEnum::OrdersIndex)`.
      * Works with https://spatie.be/docs/laravel-permission
      */
     protected function protectActionsUsingPermissions(string|\StringBackedEnum $namePrefix, array $exclude = []): void

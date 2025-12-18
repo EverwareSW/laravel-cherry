@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Not abstract so can be used as dependency injectable class.
+ * @TODO Should this be a trait (and can it be)?
  */
 class BaseRequest extends FormRequest
 {
@@ -56,7 +57,7 @@ class BaseRequest extends FormRequest
     }
 
     protected array $castCache = [];
-    protected function doCast(array &$array, bool $fresh = false): array
+    protected function cast(array &$array, bool $fresh = false): array
     {
         if ($fresh) {
             $this->castCache = [];
@@ -66,7 +67,7 @@ class BaseRequest extends FormRequest
             return $array;
         }
 
-        $casts = $this->getCasts();
+        $casts = $this->casts();
 
         // Only use $caster for string casts.
         // Note we are using the Model HasAttributes to cast the posted data,
@@ -90,7 +91,7 @@ class BaseRequest extends FormRequest
             }
 
             // We have to determine for every cast whether it matches any keys in $array,
-            // because the casts could be wildcarded using '*' so an array intersect does not suffice.
+            // because the casts could be wildcarded using '*', so an array intersect does not suffice.
             $value = data_get($array, $key) ?? data_get($array, "{$key}_id");
             if (blank($value)) {
                 $this->castCache[$key] = null;
@@ -104,7 +105,7 @@ class BaseRequest extends FormRequest
                 is_callable($cast) => $cast($value),
                 // If you want to retrieve the Model by a different column the primary key,
                 // you should just use a closure instead of a class string.
-                class_exists($cast) && !enum_exists($cast) && !$caster->isPrimitiveCast($cast) || $cast instanceof Model
+                $cast instanceof Model || class_exists($cast) && !enum_exists($cast) && !$caster->isPrimitiveCast($cast)
                     // findOrFail() does findMany when $value is an array.
                     // Note this failed-validation-rule check does not work if the cast is used inside a validation-rule
                     // and that rule is checked before the rule that validates the casted property.
@@ -163,7 +164,7 @@ class BaseRequest extends FormRequest
         $validated = parent::validated();
 
         if ($this->castValidated) {
-            $this->doCast($validated);
+            $this->cast($validated);
         }
 
         return data_get($validated, $key, $default);
@@ -175,7 +176,7 @@ class BaseRequest extends FormRequest
     public function all($keys = null)
     {
         $all = parent::all(...func_get_args());
-        return $this->castAll ? $this->doCast($all) : $all;
+        return $this->castAll ? $this->cast($all) : $all;
     }
 
     /**
@@ -186,7 +187,7 @@ class BaseRequest extends FormRequest
     {
         // If keys don't exist they aren't added to result array, as opposed to `all(keys)`.
         $data = \Arr::only(parent::all(), [$key, "{$key}_id"]); // `parent::` so not casted.
-        $this->doCast($data);
+        $this->cast($data);
         /** Overwrites {@see parent::__get()} functionality so only requested properties get casted. */
         $value = \Arr::get($data, $key, fn()=> $this->route($key));
         return $value;

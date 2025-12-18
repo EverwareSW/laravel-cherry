@@ -13,7 +13,7 @@ class StringHelper
     /** @return string[] */
     public static function explodeTrimFilter(string $delimiter, string $value): array
     {
-        return array_filter(static::explodeTrim($delimiter, $value), fn($v)=> $v !== '');
+        return ArrayHelper::filterFilled(static::explodeTrim($delimiter, $value));
     }
 
     /**
