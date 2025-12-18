@@ -13,7 +13,7 @@ class MailHelper
      * @param array|string|Address|null $address
      * @return string|null
      */
-    public static function prettifyAddress(array|string|Address|null $address): ?string
+    public static function prettifyAddress(Address|string|array|null $address): ?string
     {
         // Could also be empty array.
         if (empty($address)) {
@@ -26,7 +26,7 @@ class MailHelper
             $address = (array) $address;
         }
         if (isset($address[0])) {
-            return join(',', array_map([static::class, 'prettifyAddress'], $address));
+            return join(', ', array_map([static::class, 'prettifyAddress'], $address));
         }
 
         /** {@see Mailable::setAddress()} called from {@see Mailable::to()} */

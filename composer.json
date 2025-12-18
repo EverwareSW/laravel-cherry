@@ -21,7 +21,8 @@
     },
     "require-dev": {
         "orchestra/testbench": "^10.6",
-        "pestphp/pest": "^4.1"
+        "pestphp/pest": "^4.1",
+        "spatie/laravel-data": "^4.18"
     },
     "autoload": {
         "files": [
@@ -53,6 +54,7 @@
                 "HDb": "Everware\\LaravelCherry\\Helpers\\DatabaseHelper",
                 "HExc": "Everware\\LaravelCherry\\Helpers\\ExceptionHelper",
                 "HFile": "Everware\\LaravelCherry\\Helpers\\FileHelper",
+                "HMail": "Everware\\LaravelCherry\\Helpers\\MailHelper",
                 "HNum": "Everware\\LaravelCherry\\Helpers\\NumberHelper",
                 "HStr": "Everware\\LaravelCherry\\Helpers\\StringHelper",
                 "HUrl": "Everware\\LaravelCherry\\Helpers\\UrlHelper"
@@ -71,6 +73,18 @@
             "Composer\\Config::disableProcessTimeout",
             "@build",
             "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "composer remove --dev spatie/laravel-data --no-interaction || true",
+            "echo '========================================'",
+            "echo '  TESTING WITHOUT LARAVEL DATA PACKAGE'",
+            "@php vendor/bin/pest || true",
+            "composer require --dev spatie/laravel-data --no-interaction",
+            "echo '====================================='",
+            "echo '  TESTING WITH LARAVEL DATA PACKAGE'",
+            "@php vendor/bin/pest || true",
+            "echo '==============================================='",
+            "echo '  DO NOT FORGET, TESTS RAN TWICE (SCROLL UP)!'"
         ]
     },
     "config": {

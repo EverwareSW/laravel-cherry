@@ -34,6 +34,9 @@ class DispatchJobCommand extends Command
             $jobClass = "\\App\\Jobs\\$jobClass";
         }
         if (!class_exists($jobClass)) {
+            $jobClass = "\\Workbench$jobClass";
+        }
+        if (!class_exists($jobClass)) {
             $this->error("Job class $jobName not found");
             return static::FAILURE;
         }

@@ -32,3 +32,6 @@ Mail testing
 * $mailable->assertHasAttachedData(fn($attachment)=> true)
 
 LazyCollection fix
+
+
+// `composer test`

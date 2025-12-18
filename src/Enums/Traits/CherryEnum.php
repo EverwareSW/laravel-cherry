@@ -40,6 +40,13 @@ trait CherryEnum
     }
 
 
+    /** Based on @see BackedEnum::from() */
+    public static function fromName(string $name): static
+    {
+        return static::tryFromName($name)
+        ?? throw new \ValueError("\"$name\" is not a valid name for enum " . static::class);
+    }
+
     /** Based on @see BackedEnum::tryFrom() */
     public static function tryFromName(string $name): ?static
     {
@@ -48,15 +55,9 @@ trait CherryEnum
                 return $case;
             }
         }
-    }
 
-    /** Based on @see BackedEnum::from() */
-    public static function fromName(string $name): static
-    {
-        return static::tryFromName($name)
-        ?? throw new \ValueError("\"$name\" is not a valid name for enum " . static::class);
+        return null;
     }
-
 
     /**
      * @return static[]
@@ -70,6 +71,6 @@ trait CherryEnum
     /** @return static[] Wrap with array_filter() if you don't want `null` entries. */
     public static function tryFromNames(string|self...$names): array
     {
-        return array_map(fn(string|self $name) => $name instanceof self ? $name : static::tryFrom($name), $names);
+        return array_map(fn(string|self $name) => $name instanceof self ? $name : static::tryFromName($name), $names);
     }
 }
