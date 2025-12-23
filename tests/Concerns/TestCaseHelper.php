@@ -22,7 +22,6 @@ trait TestCaseHelper
         $this->faker()->seed($seed);
     }
 
-
     /**
      * When you {@see resolve()} or {@see app()} classes that not have been registered beforehand,
      * you must {@see Application::bind()} the mock instead of {@see Application::instance()}.

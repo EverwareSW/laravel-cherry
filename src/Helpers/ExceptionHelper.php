@@ -8,6 +8,7 @@ class TimeoutException extends \Exception {}
 class ExceptionHelper
 {
     /**
+     * @Deprecated Use {@see rescue()}.
      * Run the callback and when any Exception is thrown, just ignore it and return default.
      *
      * @param  callable  $callback

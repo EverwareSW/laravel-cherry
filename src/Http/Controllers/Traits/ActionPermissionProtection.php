@@ -9,9 +9,9 @@ trait ActionPermissionProtection
      * Call this method from Controller constructor, e.g. `$this->protectActionsUsingPermissions(PermissionEnum::OrdersIndex)`.
      * Works with https://spatie.be/docs/laravel-permission
      */
-    protected function protectActionsUsingPermissions(string|\StringBackedEnum $namePrefix, array $exclude = []): void
+    protected function protectActionsUsingPermissions(string|\BackedEnum $namePrefix, array $exclude = []): void
     {
-        if ($namePrefix instanceof \StringBackedEnum) {
+        if ($namePrefix instanceof \BackedEnum) {
             $namePrefix = $namePrefix->value;
         }
 

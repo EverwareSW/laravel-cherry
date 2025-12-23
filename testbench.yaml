@@ -1,14 +1,16 @@
-laravel: '@testbench'
+#laravel: '@testbench' # Refers to /vendor/orchestra/testbench-core/laravel
+laravel: './workbench'
 
 providers:
-  - Workbench\App\Providers\WorkbenchServiceProvider
+  - Laravel\Sanctum\SanctumServiceProvider
   - Everware\LaravelCherry\Providers\CherryServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
 
 migrations:
   - workbench/database/migrations
 
 seeders:
-  - Workbench\Database\Seeders\DatabaseSeeder
+#  - Workbench\Database\Seeders\DatabaseSeeder
 
 workbench:
   start: '/'

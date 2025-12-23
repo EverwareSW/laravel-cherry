@@ -14,7 +14,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-abstract class ModelRepository
+class ModelRepository
 {
     /**
      * @param string $model

@@ -137,7 +137,6 @@ class IndexRequest extends BaseRequest
             $return[$column] = $direction;
         }
 
-
         return $return;
     }
 
@@ -171,11 +170,11 @@ class IndexRequest extends BaseRequest
         if ($sortableColumns = $this->sortableColumns()) {
             $sortParamName = $this->sortsParamName();
             $rules[$sortParamName] = 'nullable|array';
-            $joinedSortableColumns = join('|', $sortableColumns);
+            $joinedSortableColumns = join('|', array_map(fn($c)=> preg_quote($c, '/'), $sortableColumns));
             $rules[$sortParamName.'.*'] = ["regex:/^($joinedSortableColumns)\,(asc|desc)$/"];
         }
 
-        $filters = $this->filters();
+        $filters = $this->patchRules($this->filters(), true);
         $rules += $filters;
 
         return $rules;
