@@ -2,6 +2,7 @@
 
 namespace Everware\LaravelCherry\Http\Requests;
 
+use Everware\LaravelCherry\Rules\NullableRule;
 use Illuminate\Validation\Rule;
 
 /**
@@ -23,6 +24,15 @@ class IndexRequest extends BaseRequest
      * {@see ModelRepository::addFiltersToQuery()} to see all possible comparators.
      */
     public function filters(): array
+    {
+        return [];
+    }
+
+    /**
+     * Define fields that allow string 'null' to be converted to `null` check.
+     * @return string[]
+     */
+    public function nullableFields(): array
     {
         return [];
     }
@@ -175,6 +185,15 @@ class IndexRequest extends BaseRequest
         }
 
         $filters = $this->patchRules($this->filters(), true);
+        foreach ($this->nullableFields() as $nullableField) {
+            if (array_key_exists($nullableField, $filters)) {
+                /** 'sometimes' is not really necessary anymore when using a custom rule because {@see Validator::isValidatable()}
+                  * returns false when no value is present and it's not an ImplicitRule.
+                  * That prevents rule call {@see Validator::validateAttribute()}. */
+                $filters[$nullableField] = [new NullableRule($filters[$nullableField])];
+            }
+        }
+
         $rules += $filters;
 
         return $rules;

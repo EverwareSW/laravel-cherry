@@ -166,6 +166,15 @@ class ModelRepository
                 // $column='gt:sku' or $column='sku'
                 [$column, $operator] = array_reverse(explode(':', $column, 2)) + [1 => 'eq'];
                 // $column='sku', $operator='gt' or $operator='eq'
+                if (in_array($column, $request->nullableFields())) {
+                    if ($value === 'null') {
+                        $value = null;
+                        $operator = 'null';
+                    } else if ($value === 'notNull') {
+                        $value = null;
+                        $operator = 'notNull';
+                    }
+                }
 
                 $studly = Str::studly("$column $operator");
                 if (method_exists($this, $filterByMethod = "filterBy$studly")) {
@@ -176,10 +185,14 @@ class ModelRepository
                 }
                 $studly = Str::studly($column); // Without operator
                 if (method_exists($this, $filterByMethod = "filterBy$studly")) {
-                    return $this->$filterByMethod($query, $value, $request, $operator);
+                    return $operator === 'neq'
+                        ? $query->whereNot(fn(EBuilder $q) => $this->$filterByMethod($q, $value, $request, $operator))
+                        : $this->$filterByMethod($query, $value, $request, $operator);
                 }
                 if ($query->hasNamedScope($studly)) {
-                    return $query->scopes([$studly => [$value, $operator]]);
+                    return $operator === 'neq'
+                        ? $query->whereNot(fn(EBuilder $q) => $q->scopes([$studly => [$value, $operator]]))
+                        : $query->scopes([$studly => [$value, $operator]]);
                 }
 
                 $isDynamicColumn = false;
