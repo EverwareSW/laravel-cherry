@@ -97,10 +97,11 @@ if (function_exists('pest') && function_exists('expect')) {
             // throw_if($values === $notFound, ExpectationFailedException::class, "Key `$key` not found in " . json_encode($this->value));
 
             $i = 0;
-            $this->value = \HArr::overwriteWildcards($this->value, $key, function($value, $k) use($key, &$i) {
+            $cache = [];
+            $this->value = \HArr::overwriteWildcards($this->value, $key, function($value, $k) use($key, &$i, &$cache) {
                 $type = gettype($value);
-                $replace = "snapdyn|$type|$key|$i";
-                $i++;
+                $tag = "snapdyn|$type|$key|";
+                $replace = $tag . ($cache[$tag . json_encode($value)] ??= $i++);
                 return $replace;
             }, true);
 
