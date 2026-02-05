@@ -11,7 +11,6 @@ use Illuminate\Database\Query\Builder as QBuilder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ModelRepository
@@ -68,7 +67,7 @@ class ModelRepository
      * @param null|callable(EBuilder):(null|EBuilder) $after
      * @return LengthAwarePaginator
      */
-    public function paginate(IndexRequest $request, ?callable $before = null, ?callable $after = null): LengthAwarePaginator
+    public function paginate(IndexRequest $request, ?callable $before = null, ?callable $after = null, ?callable $total = null): LengthAwarePaginator
     {
         $query = $this->query($request, $before, $after);
 
@@ -77,6 +76,7 @@ class ModelRepository
             ['*'],
             'page',
             $request->get('page') ?? null,
+            value($total, $query),
         );
 
         $paginator->withQueryString();
@@ -140,6 +140,10 @@ class ModelRepository
                     // $relation='has:products', $column='gt:sku' or $column=null
                     [$relation, $operator] = array_reverse(explode(':', $relation, 2)) + [1 => 'has'];
                     // $relation='products', $operator='has'
+                    if (!in_array($operator, IndexRequest::ALLOWED_RELATION_OPERATORS)) {
+                          $relation = $e[0];
+                          $operator = 'has';
+                      }
 
                     // If only the relation is checked and not a relations column, when $value is falsy (not empty) flip 'has' with 'doesntHave'.
                     /** Also @see ValidatesAttributes::validateDeclined() */
@@ -148,6 +152,7 @@ class ModelRepository
                     }
 
                     $relation = \Str::studly($relation); // First letter Cap does not matter.
+                    /** @see IndexRequest::ALLOWED_RELATION_OPERATORS */
                     return match($operator) {
                         'doesntHave' => $query->whereDoesntHave($relation, function(EBuilder $query) use($value, $column, &$f) {
                             $column === null or $f($query, $column, $value);
@@ -166,6 +171,11 @@ class ModelRepository
                 // $column='gt:sku' or $column='sku'
                 [$column, $operator] = array_reverse(explode(':', $column, 2)) + [1 => 'eq'];
                 // $column='sku', $operator='gt' or $operator='eq'
+                if (!in_array($operator, IndexRequest::ALLOWED_WHERE_OPERATORS)) {
+                    $column = $e[0];
+                    $operator = 'eq';
+                }
+
                 if (in_array($column, $request->nullableFields())) {
                     if ($value === 'null') {
                         $value = null;
@@ -176,14 +186,14 @@ class ModelRepository
                     }
                 }
 
-                $studly = Str::studly("$column $operator");
+                $studly = \Str::studly(str_replace(':', ' ', $column) . " $operator");
                 if (method_exists($this, $filterByMethod = "filterBy$studly")) {
                     return $this->$filterByMethod($query, $value, $request);
                 }
                 if ($query->hasNamedScope($studly)) {
                     return $query->scopes([$studly => [$value]]);
                 }
-                $studly = Str::studly($column); // Without operator
+                $studly = \Str::studly(str_replace(':', ' ', $column)); // Without operator
                 if (method_exists($this, $filterByMethod = "filterBy$studly")) {
                     return $operator === 'neq'
                         ? $query->whereNot(fn(EBuilder $q) => $this->$filterByMethod($q, $value, $request, $operator))
@@ -199,11 +209,17 @@ class ModelRepository
                 $model = $query->getModel();
                 // Make sure your Model implements `use ModelBase;`.
                 if (static::modelHasColumns($model, $column) || $isDynamicColumn = static::queryHasDynamicColumn($query, $column)) {
-                    if (!$isDynamicColumn) {
+                    if ($isDynamicColumn) {
+                        /** Because dots are replaced with underscores in query params {@see Request::create()}
+                          * we can use ':' in filter definitions (e.g. 'products:id') to pass the table name.
+                          * Make sure to add select like 'products.id as products:id'. */
+                        $column = str_replace(':', '.', $column);
+                    } else {
                         $table = $model->getTable();
                         $column = "$table.$column";
                     }
 
+                    /** @see IndexRequest::ALLOWED_WHERE_OPERATORS */
                     return match($operator) {
                         'eq'        => is_iterable($value)
                                      ? $query->where(fn(EBuilder $q) => $q->whereIn($column, $value))
@@ -335,7 +351,7 @@ class ModelRepository
         /** Also @see addSearchToQuery() */
         foreach ($request->getSortedValues() as $column => $direction) {
             /** Based on @see Model::hasGetMutator() */
-            $studlyColumn = Str::studly($column);
+            $studlyColumn = \Str::studly($column);
             $sortByMethod = "sortBy$studlyColumn";
             if (method_exists($this, $sortByMethod)) {
                 $this->$sortByMethod($query, $direction, $request);

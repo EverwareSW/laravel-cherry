@@ -10,6 +10,18 @@ use Illuminate\Validation\Rule;
  */
 class IndexRequest extends BaseRequest
 {
+    public const ALLOWED_RELATION_OPERATORS = [
+        'has', 'doesntHave',
+    ];
+
+    /** Loosely based on @see Builder::$operators */
+    public const ALLOWED_WHERE_OPERATORS = [
+        // Where
+        'eq',  'neq',  'in',    'notIn',    'null',  'notNull',  'gt',  'gte',  'lt',  'lte',
+        // Having. Laravel does not support `HAVING IN` even though MySQL does.
+        'heq', 'hneq', /*'hin', 'hnotIn',*/ 'hnull', 'hnotNull', 'hgt', 'hgte', 'hlt', 'hlte',
+    ];
+
     /*
      *
      * Overwriteables
