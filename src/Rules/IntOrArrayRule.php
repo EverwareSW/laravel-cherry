@@ -17,6 +17,6 @@ class IntOrArrayRule implements ValidationRule
             return;
         }
 
-        $fail('ptchr-bb::validation.int_or_array')->translate();
+        $fail('cherry::validation.int_or_array')->translate();
     }
 }

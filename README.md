@@ -37,3 +37,17 @@ LazyCollection fix
 
 // `composer test`
 // `vendor/bin/testbench whatever-artisan-command`
+
+
+# Snapshot testing
+To be able to refresh the snapshot for the last test with a failed snapshot assertion, add this to phpunit.xml (directly within `<phpunit>`):
+```xml
+    <!-- See https://docs.phpunit.de/en/12.4/extending-phpunit.html#registering-an-extension-from-a-composer-package -->
+    <extensions>
+        <bootstrap class="Everware\LaravelCherry\Tests\PHPUnitExtension" />
+    </extensions>
+```
+You can then run
+```bash
+php artisan test:resnap
+```

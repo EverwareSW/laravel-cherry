@@ -31,6 +31,6 @@ class StringOrArrayRule implements ValidationRule
             return;
         }
 
-        $fail('ptchr-bb::validation.string_or_array')->translate();
+        $fail('cherry::validation.string_or_array')->translate();
     }
 }

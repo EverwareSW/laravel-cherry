@@ -125,6 +125,6 @@ class ModelExistsRule implements Rule
 
     public function message(): string
     {
-        return trans_choice($this->transKey ?? 'ptchr-bb::validation.model-exists', 1 + $this->isIterable);
+        return trans_choice($this->transKey ?? 'cherry::validation.model-exists', 1 + $this->isIterable);
     }
 }

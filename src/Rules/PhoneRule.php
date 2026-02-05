@@ -37,6 +37,6 @@ class PhoneRule implements Rule
 
     public function message(): string
     {
-        return __('ptchr-bb::validation.phone');
+        return __('cherry::validation.phone');
     }
 }
