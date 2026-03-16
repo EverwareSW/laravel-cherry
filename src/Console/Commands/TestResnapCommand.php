@@ -41,10 +41,20 @@ class TestResnapCommand extends TestCommand
         // We can't use --update-snapshots (icw --filter) because that deletes all other snapshots.
         $segments = str_replace('::', '\\', str_replace('__pest_evaluable_', '', $result));
         $segments = array_slice(explode('\\', $segments), 2);
+        $testName = array_pop($segments);
+        $preg = '#^' . preg_quote($testName, '#') . '(\_\_\d+)?\.snap$#';
         /** {@see SnapshotRepository::save()} from {@see Expectation::toMatchSnapshot()} from {@see \Pest\TestSuite::__construct()}. */
-        $path = base_path('tests/.pest/snapshots/' . join(DIRECTORY_SEPARATOR, $segments) . '.snap');
-        $this->info("Deleting snapshot $path");
-        \File::delete($path);
+        $snaps = \File::files('tests/.pest/snapshots/' . join(DIRECTORY_SEPARATOR, $segments));
+        foreach ($snaps as $snap) {
+            $fileName = $snap->getFilename();
+            if (preg_match($preg, $fileName)) {
+                $this->info("Deleting snapshot $fileName");
+                \File::delete(base_path($snap->getPathname()));
+            }
+        }
+        // $path = base_path('tests/.pest/snapshots/' . join(DIRECTORY_SEPARATOR, $segments) . '.snap');
+        // $this->info("Deleting snapshot $path");
+        // \File::delete($path);
 
         /** Based on {@see MutationTest::start()}. */
         preg_match('/\\\\([a-zA-Z0-9]*)::(__pest_evaluable_)?([^#]*)"?/', $result, $matches);

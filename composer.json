@@ -32,12 +32,11 @@
         "psr-4": {
             "Everware\\LaravelCherry\\": "src/",
             "Everware\\LaravelCherry\\Database\\Seeders\\": "database/seeders/",
-            "Everware\\LaravelCherry\\Tests\\Concerns\\": "tests/Concerns/"
+            "Everware\\LaravelCherry\\Tests\\": "tests/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Everware\\LaravelCherry\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
