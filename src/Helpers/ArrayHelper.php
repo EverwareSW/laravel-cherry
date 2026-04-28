@@ -218,6 +218,21 @@ class ArrayHelper
     }
 
     /**
+     * @template T
+     * @param iterable<T> $iterable
+     * @param callable|string $key
+     * @param mixed $operator
+     * @param mixed $value
+     * @return T|null
+     */
+    public static function firstWhere(iterable $iterable, $key, $operator = null, $value = null): mixed
+    {
+        $args = func_get_args();
+        array_shift($args);
+        return collect($iterable)->firstWhere(...$args);
+    }
+
+    /**
      * Like @see Collection::every() but you can use string callables like 'is_int' and pass Closures as the array's values.
      *
      * @param ?callable $callable Can be e.g. 'is_int'
